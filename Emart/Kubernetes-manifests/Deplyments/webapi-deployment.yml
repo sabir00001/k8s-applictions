@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
       - name: webapi
-        image: akspractice01.azurecr.io/emartapp_webapi
+        image: aksprodacr.azurecr.io/emartapp_webapi
         ports:
         - containerPort: 9000
       nodeSelector: 
