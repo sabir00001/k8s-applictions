@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: vproapp-deployment
+  namespace: development
+  labels:
+    app: vproapp
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: vproapp
+  template:
+    metadata:
+      labels:
+        app: vproapp
+    spec:
+      containers:
+      - name: vproapp
+        image: akspractice01.azurecr.io/vprofileapp
+        ports:
+        - name: vproapp-port
+          containerPort: 8080
+          hostPort: 8080
+        readinessProbe:
+          httpGet:
+            path: /index
+            port: vproapp-port
+          initialDelaySeconds: 15
+          periodSeconds: 10
+      initContainers:
+      - name: init-myservice
+        image: busybox:1.28
+        command: ['sh', '-c', "until nslookup vprodb; do echo waiting for mysqldb; sleep 2; done"]
+      
+
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: vproapp
+  namespace: development
+spec:
+  type: LoadBalancer
+  selector:
+    app: vproapp
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8080
+      

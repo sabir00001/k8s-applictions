@@ -1,0 +1,13 @@
+# Configure kubectl
+az aks get-credentials --resource-group  aks-prod-rg --name aks-prod-cluster --overwrite-existing
+kubelogin remove-tokens   
+az aks get-credentials --resource-group aks-prod-rg --name aks-prod-cluster --admin
+
+#Set kubelogin to use the Azure CLI.
+kubelogin convert-kubeconfig -l azurecli
+
+kubectl get rolebinding
+kubectl get clusterrole
+kubectl auth can-i get secret --as dev -n development
+kubectl auth can-i get pod --as aksdev1
+

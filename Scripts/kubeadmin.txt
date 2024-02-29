@@ -1,0 +1,31 @@
+- Install chocolatey and kubectl locally using below link:
+  https://kubernetes.io/docs/tasks/tools/install-kubectl-windows/
+- create .kube folder on ur local machine. (if doesn't exist after installing kubectl locally)
+- copy config file from master node of the cluster to .kube folder on ur local system
+- replace the public id of ur master node in config file on ur local machine. (replace 10.0.0...... to public id of master node of cluster)
+
+apiVersion: v1
+clusters:
+- cluster:
+    certificate-authority-data: <some value>
+    server: https://20.51.241.71:6443 ###change here 10.0.0.... to public id of master node of cluster
+  name: kubernetes
+contexts:
+- context:
+    cluster: kubernetes
+    user: kubernetes-admin
+  name: kubernetes-admin@kubernetes
+current-context: kubernetes-admin@kubernetes
+----------------------------------------------
+----------------------------------------------
+----------------------------------------------          
+
+- execute below commands on master node of cluster as root user:
+
+rm /etc/kubernetes/pki/apiserver.*
+kubeadm init phase certs all --apiserver-advertise-address=0.0.0.0 --apiserver-cert-extra-sans= <give here private and public id of cluster> ####10.161.233.80,114.215.201.87
+systemctl restart kubelet             
+
+now check below commands locally 
+kubectl get nodes
+kubectl get pods
