@@ -41,7 +41,7 @@ spec:
         image: busybox:1.28
         command: ['sh', '-c', "until nslookup api; do echo waiting for api; sleep 2; done"]
       nodeSelector: 
-        nodepool-type:user-app
+        nodepool-type: user-app
       
 
 

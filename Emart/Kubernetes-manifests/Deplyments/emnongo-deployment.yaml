@@ -27,7 +27,7 @@ spec:
               name:  emart-secrets
               key: MONGO_INITDB_DATABASE
       nodeSelector: 
-        nodepool-type:user-app
+        nodepool-type: user-app
 ---
 
 apiVersion: v1

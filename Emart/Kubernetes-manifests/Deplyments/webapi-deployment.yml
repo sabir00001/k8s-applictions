@@ -21,7 +21,7 @@ spec:
         ports:
         - containerPort: 9000
       nodeSelector: 
-        nodepool-type:user-app
+        nodepool-type: user-app
 ---
 
 apiVersion: v1

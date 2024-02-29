@@ -21,7 +21,7 @@ spec:
         ports:
         - containerPort: 5000
       nodeSelector: 
-        nodepool-type:user-app
+        nodepool-type: user-app
 
 ---
 
