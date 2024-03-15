@@ -1,0 +1,19 @@
+https://ranchermanager.docs.rancher.com/getting-started/installation-and-upgrade/install-upgrade-on-a-kubernetes-cluster/rancher-on-aks
+
+Prequisite
+install ingress-nginx 
+isntall certmanger
+kubectl get service ingress-nginx-controller --namespace=ingress-nginx
+
+helm repo add rancher-stable https://releases.rancher.com/server-charts/stable
+kubectl create namespace cattle-system
+helm repo add rancher-stable https://releases.rancher.com/server-charts/stable 
+
+helm install rancher rancher-stable/rancher \
+  --namespace cattle-system \
+  --set hostname=rancher.sabirch.shop \
+  --set bootstrapPassword=admin \
+  --set ingress.tls.source=letsEncrypt \
+  --set letsEncrypt.email=sabir@yahoo.in \
+  --set letsEncrypt.ingress.class=nginx \
+  --set ingress.ingressClassName=nginx

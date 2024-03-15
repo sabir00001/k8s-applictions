@@ -7,7 +7,7 @@ reclaimPolicy: Retain  # Default is Delete, recommended is retain
 volumeBindingMode: WaitForFirstConsumer # Default is Immediate, recommended is WaitForFirstConsumer
 allowVolumeExpansion: true  
 parameters:
-  storageaccounttype: Premium_LRS # or we can use Standard_LRS
+  storageaccounttype: Standard_LRS # or we can use Standard_LRS
   kind: managed # Default is shared (Other two are managed and dedicated)
 
   

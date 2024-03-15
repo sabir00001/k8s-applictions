@@ -1,11 +1,12 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-    name: azure-managed-disk
+    name: vpro-pvc
+    namespace: vpro-dev
 spec:
   accessModes:
   - ReadWriteOnce
-  storageClassName: managed
+  storageClassName: managed-csi
   resources:
     requests:
       storage: 5Gi

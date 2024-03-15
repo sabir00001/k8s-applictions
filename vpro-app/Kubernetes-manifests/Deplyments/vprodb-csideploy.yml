@@ -1,5 +1,5 @@
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
   name: vprodb-deployment
   namespace: vpro-dev
@@ -17,29 +17,26 @@ spec:
     spec:
       containers:
       - name: vprodb
-        image: sabirchoudhury001/vprofiledb
-        #image: mysql:5.6
+        #image: sabirchoudhury001/vprofiledb
+        image: mysql:5.6
         ports:
         - containerPort: 3306
         env:
         - name: MYSQL_ROOT_PASSWORD
           valueFrom:
             secretKeyRef:
-              name: sql-secret
-              key: sqladminpass
+              name: vpro-secrets
+              key: MYSQL_ROOT_PASSWORD
         - name: MYSQL_DATABASE
           value: accounts  
         volumeMounts:
-        - name: secrets-akv
-          mountPath: "/mnt/secrets-store"
-          readOnly: true
+         - name: vpro-db-pvc
+           mountPath: "/var/lib/mysql"
       volumes:
-        - name: secrets-akv
-          csi:
-            driver: secrets-store.csi.k8s.io
-            readOnly: true
-            volumeAttributes:
-              secretProviderClass: "azure-kvname-user-msi"
+      - name: vpro-db-pvc
+        persistentVolumeClaim:
+          claimName: vpro-pvc
+       
 ---
 apiVersion: v1
 kind: Service
@@ -47,7 +44,7 @@ metadata:
   name: vprodb
   namespace: vpro-dev
 spec:
-  #clusterIP: None
+  clusterIP: None
   selector:
     app: vprodb
   ports:

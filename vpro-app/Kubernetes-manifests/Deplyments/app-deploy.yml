@@ -6,7 +6,7 @@ metadata:
   labels:
     app: vproapp
 spec:
-  replicas: 1
+  #replicas: 1
   selector:
     matchLabels:
       app: vproapp
@@ -17,11 +17,20 @@ spec:
     spec:
       containers:
       - name: vproapp
-        image: aksprodacr.azurecr.io/vprofileapp
+        image: sabirchoudhury001/vprofileapp
         ports:
         - name: vproapp-port
           containerPort: 8080
           hostPort: 8080
+        #env:
+        #- name: MYSQL_HOST
+        resources:
+          limits:
+            memory: 512Mi
+            cpu: "250m"
+          requests:
+            memory: 256Mi
+            cpu: "150m"
         readinessProbe:
           httpGet:
             path: /index
@@ -42,7 +51,7 @@ metadata:
   name: vproapp
   namespace: vpro-dev
 spec:
-  type: ClusterIP
+  type: LoadBalancer
   selector:
     app: vproapp
   ports:
