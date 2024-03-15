@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.Name }}-deployment
+  namespace: vpro-dev
+  labels:
+    app: {{ .Values.Name | default "vprocache01" }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ .Values.Name | default "vprocache01" }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.Name | default "vprocache01" }}
+    spec:
+      containers:
+      - name: {{ .Values.Name | default "vprocache01" }}
+        image: memcached
+        ports:
+        - containerPort: 11211
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.Name }}
+  namespace: vpro-dev
+spec:
+  type: ClusterIP
+  selector:
+    app: {{ .Values.Name | default "vprocache01" }}
+  ports:
+    - protocol: TCP
+      port: {{ .Values.service.port | default "11211" }}
+      targetPort: {{ .Values.service.port | default "11211" }}
+  

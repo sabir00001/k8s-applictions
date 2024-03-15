@@ -1,0 +1,25 @@
+name: vprodb
+namespace: vpro-dev
+replicaCount: 1
+
+image:
+  repository: sabirchoudhury001/vprofiledb
+  pullPolicy: always
+  # Overrides the image tag whose default is the chart appVersion.
+  tag: ""
+service:
+  name: vprocache01-service
+  type: ClusterIP
+  port: 11211
+
+env:
+  secretname: sql-secret
+  key: sqladminpass
+  value: accounts
+volumes: 
+  name: secrets-akv
+csi:
+  driver: secrets-store.csi.k8s.io
+  readOnly: true
+  volumeAttributes:
+  secretProviderClass: "azure-kvname-user-msi"

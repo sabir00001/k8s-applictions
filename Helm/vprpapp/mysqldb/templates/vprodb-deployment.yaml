@@ -1,0 +1,57 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.dbname | default "vprodb" }}-deployment
+  namespace: {{ .Values.namespace | default "vpro-dev" }}
+  labels:
+    app: {{ .Values.dbname | default "vprodb" }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ .Values.dbname | default "vprodb" }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.dbname | default "vprodb" }}
+    spec:
+      containers:
+      - name: {{ .Values.dbname | default "vprodb" }}
+        image: {{ .Values.image.repository | default "sabirchoudhury001/vprofiledb" }}
+        #image: mysql:5.6
+        ports:
+        - containerPort: {{ .Values.service.port | default "3306" }}
+        env:
+        - name: MYSQL_ROOT_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Values.env.secretname | quote }}
+              key: {{ .Values.env.key | default "sqladminpass" }}
+        - name: MYSQL_DATABASE
+          value: accounts  
+        volumeMounts:
+        - name: secrets-akv
+          mountPath: "/mnt/secrets-store"
+          readOnly: true
+      volumes:
+        - name: secrets-akv
+          csi:
+            driver: secrets-store.csi.k8s.io
+            readOnly: true
+            volumeAttributes:
+              secretProviderClass: "azure-kvname-user-msi"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.dbname | default "vprodb" }}
+  namespace: {{ .Values.namespace | default "vpro-dev" }}
+spec:
+  #clusterIP: None
+  selector:
+    app: {{ .Values.dbname | default "vprodb" }}
+  ports:
+    - protocol: TCP
+      port: {{ .Values.service.port | default "3306" }}
+      targetPort: {{ .Values.service.port | default "3306" }}
+  

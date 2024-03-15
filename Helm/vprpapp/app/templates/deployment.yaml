@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.appname }}-deployment
+  namespace: {{ .Values.Namespace }}
+  labels:
+    app: {{ .Values.appname }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ .Values.appname }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.appname }}
+    spec:
+      containers:
+      - name: {{ .Values.appname }}
+        image: {{ .Values.image.repository }}
+        ports:
+        - name: vproapp-port
+          containerPort: 8080
+          hostPort: 8080
+        readinessProbe:
+          httpGet:
+            path: /index
+            port: vproapp-port
+          initialDelaySeconds: 15
+          periodSeconds: 10
+      initContainers:
+      - name: init-myservice
+        image: busybox:1.28
+        command: ['sh', '-c', "until nslookup vprodb; do echo waiting for mysqldb; sleep 2; done"]
+      
+
+      
