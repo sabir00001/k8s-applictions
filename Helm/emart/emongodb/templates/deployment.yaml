@@ -1,0 +1,51 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "emongodb.fullname" . }}-deployment
+  labels:
+    app: emongo
+  {{- include "emongodb.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.deployment.replicas }}
+  selector:
+    matchLabels:
+      app: emongo
+    {{- include "emongodb.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        app: emongo
+      {{- include "emongodb.selectorLabels" . | nindent 8 }}
+    spec:
+      containers:
+      - env:
+        - name: MONGO_INITDB_DATABASE
+          valueFrom:
+            secretKeyRef:
+              key: MONGO_INITDB_DATABASE
+              name: emart-secrets
+        - name: KUBERNETES_CLUSTER_DOMAIN
+          value: {{ quote .Values.kubernetesClusterDomain }}
+        image: {{ .Values.deployment.emongo.image.repository }}:{{ .Values.deployment.emongo.image.tag
+          | default .Chart.AppVersion }}
+        name: emongo
+        ports:
+        - containerPort: 27017
+        resources: {}
+      nodeSelector: {{- toYaml .Values.deployment.nodeSelector | nindent 8 }}
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: emongo
+  namespace: emart-dev
+spec:
+  type: ClusterIP
+  selector:
+    app: emongo
+  ports:
+    - protocol: TCP
+      port: 27017
+      targetPort: 27017

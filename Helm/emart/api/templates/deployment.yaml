@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "api.fullname" . }}-deployment
+  labels:
+    app: api
+  {{- include "api.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.deployment.replicas }}
+  selector:
+    matchLabels:
+      app: api
+    {{- include "api.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        app: api
+      {{- include "api.selectorLabels" . | nindent 8 }}
+    spec:
+      containers:
+      - env:
+        - name: KUBERNETES_CLUSTER_DOMAIN
+          value: {{ quote .Values.kubernetesClusterDomain }}
+        image: {{ .Values.deployment.api.image.repository }}:{{ .Values.deployment.api.image.tag
+          | default .Chart.AppVersion }}
+        name: api
+        ports:
+        - containerPort: 5000
+        resources: {}
+      #nodeSelector: {{- toYaml .Values.deployment.nodeSelector | nindent 8 }}
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: api
+  namespace: emart-dev
+spec:
+  type: {{ .Values.api.type }}
+  selector:
+    app: api
+  ports:
+    - protocol: {{ .Values.api.ports.protocol }}
+      port: {{ .Values.api.ports.port }}
+      targetPort: {{ .Values.api.ports.targetPort }}
+  

@@ -1,0 +1,26 @@
+client:
+  ports:
+  - port: 90
+    protocol: TCP
+    targetPort: 4200
+  type: LoadBalancer
+deployment:
+  client:
+    image:
+      repository: emartapp
+      tag: v1
+    resources:
+      limits:
+        cpu: 200m
+        memory: 256Mi
+      requests:
+        cpu: 100m
+        memory: 128Mi
+  initMyservice:
+    image:
+      repository: busybox
+      tag: "1.28"
+  nodeSelector:
+    nodepool-type: user-app
+  replicas: 1
+kubernetesClusterDomain: cluster.local

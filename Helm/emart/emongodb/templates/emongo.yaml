@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "emongodb.fullname" . }}-emongo
+  labels:
+  {{- include "emongodb.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.emongo.type }}
+  selector:
+    app: emongo
+  {{- include "emongodb.selectorLabels" . | nindent 4 }}
+  ports:
+	{{- .Values.emongo.ports | toYaml | nindent 2 }}

@@ -1,0 +1,15 @@
+deployment:
+  emongo:
+    image:
+      repository: mongo
+      tag: v1
+  nodeSelector:
+    nodepool-type: user-app
+  replicas: 1
+emongo:
+  ports:
+  - port: 27017
+    protocol: TCP
+    targetPort: 27017
+  type: ClusterIP
+kubernetesClusterDomain: cluster.local

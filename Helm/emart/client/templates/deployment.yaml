@@ -1,0 +1,66 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "client.fullname" . }}-deployment
+  labels:
+    app: client
+  {{- include "client.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.deployment.replicas }}
+  selector:
+    matchLabels:
+      app: client
+    {{- include "client.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        app: client
+      {{- include "client.selectorLabels" . | nindent 8 }}
+    spec:
+      containers:
+      - env:
+        - name: KUBERNETES_CLUSTER_DOMAIN
+          value: {{ quote .Values.kubernetesClusterDomain }}
+        image: {{ .Values.deployment.client.image.repository }}:{{ .Values.deployment.client.image.tag
+          | default .Chart.AppVersion }}
+        name: client
+        ports:
+        - containerPort: 4200
+          hostPort: 4200
+          name: client-port
+        readinessProbe:
+          httpGet:
+            path: /
+            port: client-port
+          initialDelaySeconds: 15
+          periodSeconds: 10
+        resources: {{- toYaml .Values.deployment.client.resources | nindent 10 }}
+      initContainers:
+      - command:
+        - sh
+        - -c
+        - until nslookup api; do echo waiting for api; sleep 2; done
+        env:
+        - name: KUBERNETES_CLUSTER_DOMAIN
+          value: {{ quote .Values.kubernetesClusterDomain }}
+        image: {{ .Values.deployment.initMyservice.image.repository }}:{{ .Values.deployment.initMyservice.image.tag
+          | default .Chart.AppVersion }}
+        name: init-myservice
+        resources: {}
+      #nodeSelector: {{- toYaml .Values.deployment.nodeSelector | nindent 8 }}
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: client
+  namespace: emart-dev
+spec:
+  type: LoadBalancer
+  selector:
+    app: client
+  ports:
+    - protocol: TCP
+      port: 90
+      targetPort: 4200
+      

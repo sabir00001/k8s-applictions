@@ -1,0 +1,41 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ include "ingressemart.fullname" . }}-emart-ingress-service
+  namespace: {{ .Values.namespace }}
+  labels:
+  {{- include "ingressemart.labels" . | nindent 4 }}
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: app.sabirch.shop
+    http:
+      paths:
+      - backend:
+          service:
+            name: webapi
+            port:
+              number: 9000
+        path: /webapi
+        pathType: Prefix
+      - backend:
+          service:
+            name: api
+            port:
+              number: 5000
+        path: /api
+        pathType: Prefix
+      - backend:
+          service:
+            name: client
+            port:
+              number: 4200
+        path: /
+        pathType: Prefix
+  tls:
+  - hosts:
+    - app.sabirch.shop
+    secretName: app-tls-secret

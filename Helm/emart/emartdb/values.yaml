@@ -1,0 +1,15 @@
+deployment:
+  emartdb:
+    image:
+      repository: mysql
+      tag: 8.0.33
+  nodeSelector:
+    nodepool-type: user-app
+  replicas: 1
+emartdb:
+  ports:
+  - port: 3306
+    protocol: TCP
+    targetPort: 3306
+  type: ClusterIP
+kubernetesClusterDomain: cluster.local
