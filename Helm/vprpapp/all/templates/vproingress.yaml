@@ -19,7 +19,7 @@ spec:
               service:
                 name: vproapp
                 port: 
-                  number: 80
+                  number: 8080
   tls:
   - hosts:
     - vpro.sabirch.shop

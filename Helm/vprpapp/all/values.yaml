@@ -1,9 +1,11 @@
-appname: vproapp
-namespace: vpro-dev
+# Default values for all.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
 
 replicaCount: 1
+
 image:
-  repository: sabirchoudhury001/vprofileapp
+  repository: nginx
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
   tag: ""
@@ -38,36 +40,41 @@ securityContext: {}
   # runAsUser: 1000
 
 service:
-  type: NodePort
+  type: ClusterIP
   port: 80
-  nodePort: 30012
 
 ingress:
   enabled: false
   className: ""
-  annotations:
-    #nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
-    #cert-manager.io/cluster-issuer: letsencrypt-prod
+  annotations: {}
+    # kubernetes.io/ingress.class: nginx
+    # kubernetes.io/tls-acme: "true"
   hosts:
-    - host: vpro.sabirch.shop
+    - host: chart-example.local
+      paths:
+        - path: /
+          pathType: ImplementationSpecific
   tls: []
-  #     
+  #  - secretName: chart-example-tls
   #    hosts:
-  #    - vpro.sabirch.shop
-  #    secretName: vpro-tls-secret
+  #      - chart-example.local
 
-resources: 
-   limits:
-     cpu: 100m
-     memory: 128Mi
-   requests:
-     cpu: 100m
-     memory: 128Mi
+resources: {}
+  # We usually recommend not to specify default resources and to leave this as a conscious
+  # choice for the user. This also increases chances charts run on environments with little
+  # resources, such as Minikube. If you do want to specify resources, uncomment the following
+  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+  # limits:
+  #   cpu: 100m
+  #   memory: 128Mi
+  # requests:
+  #   cpu: 100m
+  #   memory: 128Mi
 
 autoscaling:
   enabled: false
   minReplicas: 1
-  maxReplicas: 10
+  maxReplicas: 100
   targetCPUUtilizationPercentage: 80
   # targetMemoryUtilizationPercentage: 80
 

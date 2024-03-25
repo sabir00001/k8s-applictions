@@ -10,7 +10,7 @@ metadata:
 spec:
   ingressClassName: nginx
   rules:
-    - host: app.sabirch.shop
+    - host: emart.sabirch.shop
       http:
         paths:
           - path: /webapi
@@ -36,6 +36,6 @@ spec:
                   number: 4200
   tls:
   - hosts:
-    - app.sabirch.shop
+    - emart.sabirch.shop
     secretName: app-tls-secret
                 

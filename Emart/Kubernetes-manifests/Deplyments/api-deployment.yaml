@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
       - name: api
-        image: aksprodacr.azurecr.io/emartapp_api
+        image: mafacr01.azurecr.io/emartapp_api
         ports:
         - containerPort: 5000
       nodeSelector: 

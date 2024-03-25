@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
       - name: client
-        image: aksprodacr.azurecr.io/emartapp_client
+        image: mafacr01.azurecr.io/emartapp_client
         ports:
         - name: client-port
           containerPort: 4200
@@ -52,7 +52,7 @@ metadata:
   name: client
   namespace: emart-dev
 spec:
-  type: LoadBalancer
+  type: ClusterIP
   selector:
     app: client
   ports:
